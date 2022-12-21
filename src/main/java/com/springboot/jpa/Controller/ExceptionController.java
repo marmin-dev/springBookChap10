@@ -1,5 +1,7 @@
 package com.springboot.jpa.Controller;
 
+import com.springboot.jpa.common.Constants;
+import com.springboot.jpa.common.exception.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +26,11 @@ public class ExceptionController {
     public void getRuntimeException(){
         throw new RuntimeException("getRuntime 메서드 호출!");
     }
+    @GetMapping("/custom")
+    public void getCustomException() throws CustomException{
+        throw new CustomException(Constants.ExceptionClass.PRODUCT,HttpStatus.BAD_REQUEST,"getCustomException" +
+                "메서드 호출");
+    }
     @ExceptionHandler(value = RuntimeException.class)
     public ResponseEntity<Map<String,String>> handleException(RuntimeException e,
                                                               HttpServletRequest request){
@@ -40,4 +47,5 @@ public class ExceptionController {
 
         return new ResponseEntity<>(map,responseHeaders,status);
     }
+
 }

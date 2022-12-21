@@ -1,5 +1,6 @@
 package com.springboot.jpa.common;
 
+import com.springboot.jpa.common.exception.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -30,5 +31,18 @@ public class CustomExceptionHandler {
         map.put("message",e.getMessage());
 
         return new ResponseEntity<>(map,responseHeaders,httpStatus);
+    }
+    @ExceptionHandler(value = CustomException.class)
+    public ResponseEntity<Map<String,String>> handleException(CustomException e,
+                                                              HttpServletRequest request){
+        HttpHeaders responseHeaders = new HttpHeaders();
+        logger.error("ADVICE 내 HandlerException 호출,{},{},",request.getRequestURI(),
+                e.getMessage());
+        Map<String,String> map = new HashMap<>();
+        map.put("error type",e.getHttpStatusType());
+        map.put("code",Integer.toString(e.getHttpStatusCode()));
+        map.put("message", e.getMessage());
+
+        return new ResponseEntity<>(map,responseHeaders,e.getHttpStatus());
     }
 }
